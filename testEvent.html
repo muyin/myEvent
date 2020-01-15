@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="">
+    <style> </style> 
+ </head>
+<body>
+    <script src="./fixIco1.js"></script>
+    <script> 
+        window.onload = function(){
+            var event = Event();
+            var event1 = Event();  // 生成另一个发布订阅对象，与event订阅相同的事件也不相互影响   
+            var fn1 = function(a){ console.log('方法1：',a); };
+            var fn2 = function(a){ console.log('方法2：',a); };
+            var fn3 = function(a){ console.log('once方法3：',a); };
+            // 先发布再订阅。 
+            event.emit('jk-b', '2四川'); event.emit('jk-b', '4成都');
+            event.emit('jk-c', '3四川'); event.emit('jk-c', '6成都');
+            event.on('jk-b', fn1);          // 显示"方法1: 2四川" 和 "方法1: 4成都"
+            event.once('jk-c', fn2);        // 显示"方法2: 3四川" 和 "方法2: 6成都"
+            event.emit('jk-b', 'jk2');      // 显示"方法1: jk2"，刚才on订阅时将方法加入了列表，可再次触发。看注意第二点
+            event.emit('jk-c', 'jk3');      // 什么都不显示，先发布后订阅，once不将方法加入列表，无法再次触发。看注意第二点
+            event.removeListener('jk-b');   // 清除'jk-b'事件的所有订阅方法
+            event.emit('jk-b', 'jk4');      // 什么都不显示，因为清空了jk-b事件的所有订阅方法。
+            event.on('jk-b', fn2);          // 什么都不显示，对同一事件只能进行一次先发布再订阅
+            event.emit('jk-b', 'jk4');      // 显示"方法2: jk4"。只能进行先订阅再发布了
+            console.log('--------------');
+            // 先订阅再发布
+            event1.on('jk-b', fn2);
+            event1.on('jk-b', fn1);
+            event1.on('jk-b', fn1);
+            event1.once('jk-b', fn1);
+            event1.once('jk-b', fn3);
+            event1.emit('jk-b', '执行1');   // 显示 "方法1: 执行1", "方法2: 执行1", "方法1: 执行1" 和 "方法1: 执行1", "once方法3：执行1"
+            event1.emit('jk-b', '执行2');   // 显示 "方法2: 执行2" 和 "方法1: 执行2" 和 "方法1: 执行2"。因为once只能执行一次
+            event1.removeListener('jk-b', fn1);  // 清除'jk-d'事件的所有fn1方法
+            event1.emit('jk-b', '执行3');   // 显示 "方法2：执行3"
+
+            // var event = Event();
+            // var event1 = Event();
+            // console.log(event);
+            // fn1 = function(n, a, b){
+            //     console.log('先订阅再发布jka:'+n, a, b);
+            // }
+            // fn3 = function(n, a, b){
+            //     console.log('先订阅再发布jkb:'+n, a, b);
+            // }
+            // fn2 = function(n, a, b){
+            //     console.log('先发布再订阅jk:'+n, a, b);
+            // }
+            // fn4 = function(n,a){
+            //     console.log('once先订阅再发布方法:'+n, a);
+            // }
+            // fn5 = function(n,a){
+            //     console.log('once先发布后订阅方法:'+n, a);
+            // }
+            
+            // event.on('e0', fn1);
+            // event1.on('e0', fn2);
+            // event.emit('e0', 1,2,3);
+            // event1.emit('e0', 3,6,0);
+
+            // event.on('jk1', fn4);
+            // event.once('jk1', fn4);
+            // event.once('jk1', fn4);
+            // event.emit('jk1', 8, 'once', 8);
+            // event.emit('jk1', 9, 'once');
+            // event.emit('jk2', 10, 'once2');
+            // event.once('jk2', fn5);
+            // event.on('jk2', fn1);
+            // event.on('jk2', fn1);
+            // event.emit('jk2', 11, 'once>on', 11);
+
+            // event.on('jk-a', fn1);
+            // event.on('jk-a', fn3);
+            // event.on('jk-a', fn1);
+            // event.emit('jk-a', 1, '中国', 1);
+            // event.removeListener('jk-a', fn1);
+            // event.emit('jk-a', 3, '中国', 3);
+            
+            // event.emit('jk-b', 2, '四川');
+            // event.emit('jk-c', 4, '成都');
+            // event.emit('jk-b', 4, '四川');
+            // event.on('jk-b', function(a,b){
+            //     console.log('先发布再订阅jk-b', a, b);
+            // });
+            // event.on('jk-c', function(a,b){
+            //     console.log('先发布再订阅jk-c', a, b);
+            // });
+            // event.emit('jk-b', 6, '四川');
+            // event.removeListener('jk-b');
+            // event.emit('jk-b', 7, '四川');
+            // event.on('jk-b', function(a,b){
+            //     console.log('先发布再订阅jk-b7', a, b);
+            // });
+            // event.on('jk-b', function(a,b){
+            //     console.log('先发布再订阅jk-b7', a, b);
+            // })
+            // event.emit('jk-b',9,'jk-b7');
+            // event.removeListener('jk-b');
+            // event.emit('jk-b',9,'jk-b78');
+            // event.emit('jk-e',9);
+
+        }
+    </script>
+</body>
+
+</html>
