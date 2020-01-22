@@ -53,11 +53,11 @@ var Event = function(){
     };
     // 注册事件方法。key: {String} 事件名， fn：{function} 处理事件函数
     listen = function(key, fn){
-        _listen(list, key, fn); // 无论先发布再订阅，还是先订阅再发布，事件方法都要添加到列表
         if ( offline[key] ) {
             // 是先发布后订阅的情形
             _doOffline.call(this, key, fn);
         }
+        _listen(list, key, fn); // 无论先发布再订阅，还是先订阅再发布，都要将事件方法添加到列表
     };
     // 注册单次事件方法 key: {String} 事件名， fn：{function} 处理事件函数
     once = function(key, fn){
